@@ -1,3 +1,7 @@
+# Ignore testing directory
+build/
+
+# From Github
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
