@@ -20,6 +20,9 @@
 #   ACIS_LIBRARIES          - Points to the debug and release version of ACIS dynamic libraries
 #   ACIS_LINK_LIBRARIES     - This variable points tp both ACIS and Threads libraries (ACIS requires Threads library to run)
 #
+#   ACIS_REDIST_DEBUG       - Points to the SpaACISd.dll file
+#   ACIS_REDIST_RELEASE     - Points to the SpaACIS.dll / libSpaACIS.so file
+#
 
 
 #
@@ -138,6 +141,15 @@ if(ACIS_FOUND)
 	set(ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR})
 	# Set a variable to be used for linking ACIS and Threads to the project
 	set(ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+    # Set somes variables which point to the ACIS dynamic libraries (.dll/.so)
+    if(WIN32)
+        set(ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaACISd.dll)
+        set(ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll)  
+    else()
+        # Only Windows version of ACIS has DEBUG libraries
+        set(ACIS_REDIST_DEBUG "")
+        set(ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so)
+    endif()
 endif()
 
 # These are some internal variables and they should be muted
@@ -153,3 +165,4 @@ unset(_ACIS_SEARCH_ROOT)
 unset(_ACIS_SEARCH_NORMAL)
 unset(_ACIS_SEARCH_PATHS)
 unset(_ACIS_SEARCH_HINTDIRS)
+unset(_ACIS_ROOT_DIR)
