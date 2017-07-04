@@ -147,7 +147,7 @@ if(ACIS_FOUND)
         set(ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll)  
     else()
         # Only Windows version of ACIS has DEBUG libraries
-        set(ACIS_REDIST_DEBUG "")
+        set(ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so)
         set(ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so)
     endif()
 endif()
