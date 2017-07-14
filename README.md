@@ -60,6 +60,10 @@ install (
 )
 ```
 
+## License
+
+[The Unlicense](LICENSE)
+
 ## Author
 
 * Onur Rauf Bingol (contact@onurbingol.net)
