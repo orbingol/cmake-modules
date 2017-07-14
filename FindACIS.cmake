@@ -138,9 +138,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
     ACIS
     FOUND_VAR ACIS_FOUND
-    REQUIRED_VARS
-    ACIS_LIBRARIES
-    ACIS_INCLUDE_DIR
+    REQUIRED_VARS ACIS_LIBRARIES ACIS_INCLUDE_DIR
     HANDLE_COMPONENTS
     FAIL_MESSAGE "Cannot find ACIS!"
 )
