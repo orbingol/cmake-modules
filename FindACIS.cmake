@@ -49,9 +49,8 @@ endif()
 
 # Use the environmental variable A3DT to find ACIS path
 if(DEFINED ENV{A3DT})
-    message(STATUS "findACIS: A3DT is set to '$ENV{A3DT}' and will be used to find the ACIS install path.")
-    set(_ACIS_SEARCH_NORMAL PATHS "$ENV{A3DT}")
-    list(APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_NORMAL)
+  set(_ACIS_SEARCH_NORMAL PATHS "$ENV{A3DT}")
+  list(APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_NORMAL)
 endif()
 
 # Use some approximated directories to find ACIS path
@@ -89,7 +88,6 @@ get_filename_component(_ACIS_ROOT_DIR ${ACIS_INCLUDE_DIR} PATH)
 
 # If ARCH is set, use it by default
 if(DEFINED ENV{ARCH})
-    message(STATUS "findACIS: ARCH environmental variable is set to '$ENV{ARCH}' and will be used to set ACIS ARCH.")
 	set(ACIS_ARCH "$ENV{ARCH}")
 else()
     # If no environmental variables are set for ACIS ARCH, try to find it manually
@@ -108,6 +106,9 @@ else()
 		set(ACIS_ARCH "macos_b64")
 	endif()
 endif()
+
+# Use ACIS ARCH as the version string
+set(ACIS_VERSION_STRING ${ACIS_ARCH})
 
 #
 # Find ACIS library
@@ -128,16 +129,22 @@ SELECT_LIBRARY_CONFIGURATIONS(ACIS)
 #
 
 # ACIS requires the Threads library
-find_package(Threads REQUIRED)
+find_package(Threads QUIET REQUIRED)
 
 #
 # Post-processing
 #
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(ACIS 
+  FOUND_VAR ACIS_FOUND
+  REQUIRED_VARS
+    ACIS_LIBRARIES
+    ACIS_INCLUDE_DIR
+  HANDLE_COMPONENTS
+  FAIL_MESSAGE "Cannot find ACIS!"
+)
 
 if(ACIS_FOUND)
-	# Print library found status message
-	message(STATUS "Found ACIS: ${ACIS_FOUND}")
-	message(STATUS "ACIS Arch: ${ACIS_ARCH}")
 	set(ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR})
 	# Set a variable to be used for linking ACIS and Threads to the project
 	set(ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
