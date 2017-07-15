@@ -132,6 +132,37 @@ select_library_configurations( ACIS )
 # Find other required packages and libraries
 #
 
+# Process components
+if( ACIS_FIND_COMPONENTS )
+  foreach( component ${ACIS_FIND_COMPONENTS} )
+    string( TOUPPER ${component} _COMPONENT )
+    set( ACIS_USE_${_COMPONENT} ON )
+  endforeach()
+endif()
+
+
+# Find 3D ACIS-HOOPS Bridge bundled with the ACIS package
+if( ACIS_USE_HOOPS )
+  # Note: ACIS_HOOPS_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
+  if( NOT ACIS_HOOPS_LIBRARY )
+    find_library( ACIS_HOOPS_LIBRARY_DEBUG NAMES SpaHBridged PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
+    find_library( ACIS_HOOPS_LIBRARY_RELEASE NAMES SpaHBridge PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
+  endif()
+
+  # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized 3D ACIS-HOOPS Bridge library
+  select_library_configurations( ACIS_HOOPS )
+
+  # This is required by FPHSA()
+  if( ACIS_HOOPS_LIBRARY AND ACIS_INCLUDE_DIR )
+    set( ACIS_HOOPS_FOUND ON )
+  endif()
+
+  # These are some internal variables and they should be muted
+  mark_as_advanced(
+      ACIS_HOOPS_LIBRARY_RELEASE
+      ACIS_HOOPS_LIBRARY_DEBUG
+  )
+endif()
 
 #
 # Post-processing
@@ -151,10 +182,20 @@ if( ACIS_FOUND )
   set( ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR} )
   # Set a variable to be used for linking ACIS and Threads to the project
   set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+  if( ACIS_HOOPS_FOUND )
+    set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_HOOPS_LIBRARIES} )
+  endif()
+
   # Set somes variables which point to the ACIS dynamic libraries (.dll/.so)
   if( WIN32 )
     set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaACISd.dll )
     set( ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll )
+    if( ACIS_HOOPS_FOUND )
+      # TO-DO: We might need to add the HOOPS DLL file to the list
+      set( ACIS_REDIST_DEBUG ${ACIS_REDIST_DEBUG} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridged.dll )
+      set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridge.dll )
+    endif()
   else()
     # Only Windows version of ACIS has DEBUG libraries
     set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so )
