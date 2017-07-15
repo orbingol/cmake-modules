@@ -30,111 +30,111 @@
 #
 
 # Required CMake Flags when NOT using Visual Studio
-if (NOT MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif ()
+if( NOT MSVC )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
+endif()
 
 #
 # Set up the paths
 #
 
 # Prepare library search paths
-set(_ACIS_SEARCH_PATHS)
+set( _ACIS_SEARCH_PATHS )
 
 # Users can set ACIS_ROOT before calling find_package() for custom ACIS install directories
-if (ACIS_ROOT)
-  set(_ACIS_SEARCH_ROOT PATHS ${ACIS_ROOT} NO_DEFAULT_PATH)
-  list(APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_ROOT)
-endif ()
+if( ACIS_ROOT )
+  set( _ACIS_SEARCH_ROOT PATHS ${ACIS_ROOT} NO_DEFAULT_PATH )
+  list( APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_ROOT )
+endif()
 
 # Use the environmental variable A3DT to find ACIS path
-if (DEFINED ENV{A3DT})
-  set(_ACIS_SEARCH_NORMAL PATHS "$ENV{A3DT}")
-  list(APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_NORMAL)
-endif ()
+if( DEFINED ENV{A3DT} )
+  set( _ACIS_SEARCH_NORMAL PATHS "$ENV{A3DT}" )
+  list( APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_NORMAL )
+endif()
 
 # Use some approximated directories to find ACIS path
-set(_ACIS_SEARCH_HINTDIRS
+set( _ACIS_SEARCH_HINTDIRS
     "$ENV{PROGRAMFILES}/Spatial/acis"
     "/opt/acis"
     "/opt/r26" # for ACIS R26
     "/opt/2017" # for ACIS R2017
     )
-foreach (hintdir ${_ACIS_SEARCH_HINTDIRS})
-  file(GLOB acisdirs ${hintdir} ${hintdir}*/)
-  foreach (dir ${acisdirs})
-    if (IS_DIRECTORY ${dir})
-      set(_ACIS_SEARCH_HINTPATH PATHS ${dir})
-      list(APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_HINTPATH)
-    endif ()
-  endforeach ()
-endforeach ()
+foreach( hintdir ${_ACIS_SEARCH_HINTDIRS} )
+  file( GLOB acisdirs ${hintdir} ${hintdir}*/ )
+  foreach( dir ${acisdirs} )
+    if( IS_DIRECTORY ${dir} )
+      set( _ACIS_SEARCH_HINTPATH PATHS ${dir} )
+      list( APPEND _ACIS_SEARCH_PATHS _ACIS_SEARCH_HINTPATH )
+    endif()
+  endforeach()
+endforeach()
 
 #
 # Find ACIS headers
 #
 
 # Loop through the search paths to find "acis.hxx" header file
-foreach (search ${_ACIS_SEARCH_PATHS})
-  find_path(ACIS_INCLUDE_DIR NAMES acis.hxx ${${search}} PATH_SUFFIXES include)
-endforeach ()
+foreach( search ${_ACIS_SEARCH_PATHS} )
+  find_path( ACIS_INCLUDE_DIR NAMES acis.hxx ${${search}} PATH_SUFFIXES include )
+endforeach()
 
 # Get ACIS root directory and use it to find ARCH and libraries
-get_filename_component(_ACIS_ROOT_DIR ${ACIS_INCLUDE_DIR} PATH)
+get_filename_component( _ACIS_ROOT_DIR ${ACIS_INCLUDE_DIR} PATH )
 
 #
 # Find ACIS architecture (ARCH)
 #
 
 # If ARCH is set, use it by default
-if (DEFINED ENV{ARCH})
-  set(ACIS_ARCH "$ENV{ARCH}")
-else ()
+if( DEFINED ENV{ARCH} )
+  set( ACIS_ARCH "$ENV{ARCH}" )
+else()
   # If no environmental variables are set for ACIS ARCH, try to find it manually
-  if (WIN32)
-    file(GLOB acisarchs RELATIVE ${_ACIS_ROOT_DIR} "${_ACIS_ROOT_DIR}/NT_VC*DLL")
-    foreach (arch ${acisarchs})
-      if (IS_DIRECTORY ${_ACIS_ROOT_DIR}/${arch})
-        set(ACIS_ARCH ${arch})
-      endif ()
-    endforeach ()
-  endif ()
-  if (UNIX AND NOT APPLE)
-    set(ACIS_ARCH "linux_a64")
-  endif ()
-  if (APPLE)
-    set(ACIS_ARCH "macos_b64")
-  endif ()
-endif ()
+  if( WIN32 )
+    file( GLOB acisarchs RELATIVE ${_ACIS_ROOT_DIR} "${_ACIS_ROOT_DIR}/NT_VC*DLL" )
+    foreach( arch ${acisarchs} )
+      if( IS_DIRECTORY ${_ACIS_ROOT_DIR}/${arch} )
+        set( ACIS_ARCH ${arch} )
+      endif()
+    endforeach()
+  endif()
+  if( UNIX AND NOT APPLE )
+    set( ACIS_ARCH "linux_a64" )
+  endif()
+  if( APPLE )
+    set( ACIS_ARCH "macos_b64" )
+  endif()
+endif()
 
 # Use ACIS ARCH as the version string
-set(ACIS_VERSION_STRING ${ACIS_ARCH})
+set( ACIS_VERSION_STRING ${ACIS_ARCH} )
 
 #
 # Find ACIS library
 #
 
 # Note: ACIS_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
-if (NOT ACIS_LIBRARY)
-  find_library(ACIS_LIBRARY_DEBUG NAMES SpaACISd PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin)
-  find_library(ACIS_LIBRARY_RELEASE NAMES SpaACIS PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin)
-endif ()
+if( NOT ACIS_LIBRARY )
+  find_library( ACIS_LIBRARY_DEBUG NAMES SpaACISd PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
+  find_library( ACIS_LIBRARY_RELEASE NAMES SpaACIS PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
+endif()
 
 # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized ACIS library
-include(SelectLibraryConfigurations)
-select_library_configurations(ACIS)
+include( SelectLibraryConfigurations )
+select_library_configurations( ACIS )
 
 #
 # Find other required packages and libraries
 #
 
 # ACIS requires the Threads library
-find_package(Threads QUIET REQUIRED)
+find_package( Threads QUIET REQUIRED )
 
 #
 # Post-processing
 #
-include(FindPackageHandleStandardArgs)
+include( FindPackageHandleStandardArgs )
 find_package_handle_standard_args(
     ACIS
     FOUND_VAR ACIS_FOUND
@@ -143,20 +143,20 @@ find_package_handle_standard_args(
     FAIL_MESSAGE "Cannot find ACIS!"
 )
 
-if (ACIS_FOUND)
-  set(ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR})
+if( ACIS_FOUND )
+  set( ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR} )
   # Set a variable to be used for linking ACIS and Threads to the project
-  set(ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
   # Set somes variables which point to the ACIS dynamic libraries (.dll/.so)
-  if (WIN32)
-    set(ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaACISd.dll)
-    set(ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll)
-  else ()
+  if( WIN32 )
+    set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaACISd.dll )
+    set( ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll )
+  else()
     # Only Windows version of ACIS has DEBUG libraries
-    set(ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so)
-    set(ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so)
-  endif ()
-endif ()
+    set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so )
+    set( ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so )
+  endif()
+endif()
 
 # These are some internal variables and they should be muted
 mark_as_advanced(
@@ -167,8 +167,8 @@ mark_as_advanced(
 )
 
 # Unset the temporary variables
-unset(_ACIS_SEARCH_ROOT)
-unset(_ACIS_SEARCH_NORMAL)
-unset(_ACIS_SEARCH_PATHS)
-unset(_ACIS_SEARCH_HINTDIRS)
-unset(_ACIS_ROOT_DIR)
+unset( _ACIS_SEARCH_ROOT )
+unset( _ACIS_SEARCH_NORMAL )
+unset( _ACIS_SEARCH_PATHS )
+unset( _ACIS_SEARCH_HINTDIRS )
+unset( _ACIS_ROOT_DIR )
