@@ -197,9 +197,9 @@ if( ACIS_FOUND )
       set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridge.dll )
     endif()
   else()
-    # Only Windows version of ACIS has DEBUG libraries
-    set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so )
-    set( ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/libSpaACIS.so )
+    # Setting these variables for install is unnecessary due to the working priciples of non-Windows systems
+    set( ACIS_REDIST_DEBUG "" )
+    set( ACIS_REDIST_RELEASE "" )
   endif()
 endif()
 
