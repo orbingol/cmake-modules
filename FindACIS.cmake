@@ -84,6 +84,9 @@ foreach( search ${_ACIS_SEARCH_PATHS} )
   find_path( ACIS_INCLUDE_DIR NAMES acis.hxx ${${search}} PATH_SUFFIXES include )
 endforeach()
 
+# Set INCLUDE_DIRS variable
+set( ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR} )
+
 # Get ACIS root directory and use it to find ARCH and libraries
 get_filename_component( _ACIS_ROOT_DIR ${ACIS_INCLUDE_DIR} PATH )
 
@@ -179,7 +182,6 @@ if( ACIS_FOUND )
   # ACIS requires the Threads library
   find_dependency( Threads REQUIRED )
 
-  set( ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR} )
   # Set a variable to be used for linking ACIS and Threads to the project
   set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
