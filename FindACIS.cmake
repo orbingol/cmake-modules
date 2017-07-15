@@ -29,6 +29,11 @@
 # Pre-processing
 #
 
+# Load required CMake modules
+include( SelectLibraryConfigurations )
+include( FindPackageHandleStandardArgs )
+include( CMakeFindDependencyMacro )
+
 # Required CMake Flags when NOT using Visual Studio
 if( NOT MSVC )
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
@@ -121,20 +126,16 @@ if( NOT ACIS_LIBRARY )
 endif()
 
 # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized ACIS library
-include( SelectLibraryConfigurations )
 select_library_configurations( ACIS )
 
 #
 # Find other required packages and libraries
 #
 
-# ACIS requires the Threads library
-find_package( Threads QUIET REQUIRED )
 
 #
 # Post-processing
 #
-include( FindPackageHandleStandardArgs )
 find_package_handle_standard_args(
     ACIS
     FOUND_VAR ACIS_FOUND
@@ -144,6 +145,9 @@ find_package_handle_standard_args(
 )
 
 if( ACIS_FOUND )
+  # ACIS requires the Threads library
+  find_dependency( Threads REQUIRED )
+
   set( ACIS_INCLUDE_DIRS ${ACIS_INCLUDE_DIR} )
   # Set a variable to be used for linking ACIS and Threads to the project
   set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
