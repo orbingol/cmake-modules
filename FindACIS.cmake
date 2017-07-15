@@ -190,6 +190,66 @@ if( ACIS_FOUND )
     find_package( Threads REQUIRED )
   endif()
 
+  # Add imported targets
+  if( NOT TARGET ACIS::ACIS )
+    add_library( ACIS::ACIS UNKNOWN IMPORTED )
+    set_target_properties( ACIS::ACIS PROPERTIES
+        INTERFACE_LINK_LIBRARIES "Threads::Threads" )
+    if( ACIS_INCLUDE_DIRS )
+      set_target_properties( ACIS::ACIS PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "${ACIS_INCLUDE_DIRS}" )
+    endif()
+    if( EXISTS "${ACIS_LIBRARY}" )
+      set_target_properties( ACIS::ACIS PROPERTIES
+          IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+          IMPORTED_LOCATION "${ACIS_LIBRARY}" )
+    endif()
+    if( EXISTS "${ACIS_LIBRARY_RELEASE}" )
+      set_property( TARGET ACIS::ACIS APPEND PROPERTY
+          IMPORTED_CONFIGURATIONS RELEASE )
+      set_target_properties( ACIS::ACIS PROPERTIES
+          IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+          IMPORTED_LOCATION_RELEASE "${ACIS_LIBRARY_RELEASE}" )
+    endif()
+    if( EXISTS "${ACIS_LIBRARY_DEBUG}" )
+      set_property( TARGET ACIS::ACIS APPEND PROPERTY
+          IMPORTED_CONFIGURATIONS DEBUG )
+      set_target_properties( ACIS::ACIS PROPERTIES
+          IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+          IMPORTED_LOCATION_DEBUG "${ACIS_LIBRARY_DEBUG}" )
+    endif()
+  endif()
+
+  if( ACIS_HOOPS_FOUND )
+    if( NOT TARGET ACIS::HOOPS )
+      add_library( ACIS::HOOPS UNKNOWN IMPORTED )
+      set_target_properties( ACIS::HOOPS PROPERTIES
+          INTERFACE_LINK_LIBRARIES "ACIS::ACIS" )
+      if( ACIS_INCLUDE_DIRS )
+        set_target_properties( ACIS::HOOPS PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${ACIS_INCLUDE_DIRS}" )
+      endif()
+      if( EXISTS "${ACIS_HOOPS_LIBRARY}" )
+        set_target_properties( ACIS::HOOPS PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+            IMPORTED_LOCATION "${ACIS_HOOPS_LIBRARY}" )
+      endif()
+      if( EXISTS "${ACIS_HOOPS_LIBRARY_RELEASE}" )
+        set_property( TARGET ACIS::HOOPS APPEND PROPERTY
+            IMPORTED_CONFIGURATIONS RELEASE )
+        set_target_properties( ACIS::HOOPS PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+            IMPORTED_LOCATION_RELEASE "${ACIS_HOOPS_LIBRARY_RELEASE}" )
+      endif()
+      if( EXISTS "${ACIS_HOOPS_LIBRARY_DEBUG}" )
+        set_property( TARGET ACIS::HOOPS APPEND PROPERTY
+            IMPORTED_CONFIGURATIONS DEBUG )
+        set_target_properties( ACIS::HOOPS PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+            IMPORTED_LOCATION_DEBUG "${ACIS_HOOPS_LIBRARY_DEBUG}" )
+      endif()
+    endif()
+  endif()
 
   # Set a variable to be used for linking ACIS and Threads to the project
   set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
