@@ -27,16 +27,16 @@ find_package ( ACIS REQUIRED )
 
 # Check if CMake has found libraries and headers for 3D ACIS Modeler
 if ( ACIS_FOUND )
-  include_directories(${ACIS_INCLUDE_DIRS})
-  # We don't need ACIS_ROOT variable anymore
-  unset(ACIS_ROOT)
-  unset(ACIS_ROOT CACHE)
+  include_directories ( ${ACIS_INCLUDE_DIRS} )
+  # Unset ACIS_ROOT
+  unset ( ACIS_ROOT )
+  unset ( ACIS_ROOT CACHE )
 else ()
   message(FATAL_ERROR "ACIS not found")
 endif ()
 ```
 
-ACIS requires the Threads library. To link both ACIS and the Threads library:
+_3D ACIS Modeler_ requires Threads library. To link ACIS and Threads library (and the other required components):
 
 ```
 target_link_libraries ( MyACISApp ${ACIS_LINK_LIBRARIES} )
@@ -60,7 +60,7 @@ install (
 )
 ```
 
-It is also possible to find _3D ACIS-HOOPS Bridge_ by adding a `COMPONENTS` argument to `find_package`:
+It is also possible to find _3D ACIS-HOOPS Bridge_ by adding a `COMPONENTS` argument to `find_package`. It will be automatically added to `ACIS_LINK_LIBRARIES` variable:
 
 ```
 find_package ( ACIS COMPONENTS HOOPS REQUIRED )
