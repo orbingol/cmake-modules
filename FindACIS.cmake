@@ -1,3 +1,5 @@
+# Distributed under "The Unlicense" License. See http://unlicense.org/ for details.
+
 #.rst:
 # FindACIS
 # --------
