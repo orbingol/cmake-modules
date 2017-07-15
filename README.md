@@ -2,7 +2,7 @@
 
 This repository contains the following [CMake](https://cmake.org/) modules:
 
-* __findACIS__: Finds libraries and headers for building applications which use [Spatial Corporation](https://www.spatial.com/)'s 3D ACIS Modeler
+* __findACIS__: Finds libraries and headers for building applications which use [Spatial Corporation](https://www.spatial.com/)'s _3D ACIS Modeler_
 
 ## Usage Examples
 
@@ -58,6 +58,12 @@ install (
   DESTINATION ${APP_INSTALL_DIR}
   CONFIGURATIONS Debug
 )
+```
+
+It is also possible to find _3D ACIS-HOOPS Bridge_ by adding a `COMPONENTS` argument to `find_package`:
+
+```
+find_package ( ACIS COMPONENTS HOOPS REQUIRED )
 ```
 
 ## License
