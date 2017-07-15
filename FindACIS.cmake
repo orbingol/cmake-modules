@@ -35,7 +35,7 @@
 # Load required CMake modules
 include( SelectLibraryConfigurations )
 include( FindPackageHandleStandardArgs )
-include( CMakeFindDependencyMacro )
+include( CMakeFindDependencyMacro OPTIONAL RESULT_VARIABLE _CMakeFDM_Found )
 
 # Required CMake Flags when NOT using Visual Studio
 if( NOT MSVC )
@@ -182,8 +182,14 @@ find_package_handle_standard_args(
 )
 
 if( ACIS_FOUND )
-  # ACIS requires the Threads library
-  find_dependency( Threads REQUIRED )
+  # ACIS requires the Threads library with we might need some extra tricks for older CMake versions
+  enable_language( C )
+  if( _CMakeFDM_FOUND )
+    find_dependency( Threads REQUIRED )
+  else()
+    find_package( Threads REQUIRED )
+  endif()
+
 
   # Set a variable to be used for linking ACIS and Threads to the project
   set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
