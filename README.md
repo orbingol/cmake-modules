@@ -74,12 +74,10 @@ The other components that can be discovered by this CMake find module are
 * Defeaturing - `DEFEATURE`
 * Advanced Deformable Modeling - `ADMHUSK`
 
-## License
-
-[The Unlicense](LICENSE)
-
 ## Author
 
 * Onur Rauf Bingol (contact@onurbingol.net)
 
-ACIS and SAT are registered trademarks of [Spatial Corporation](https://www.spatial.com/), a subsidiary of [Dassault Systemes](https://www.3ds.com/).
+## License
+
+CMake find modules are released under [The Unlicense](LICENSE). ACIS and SAT are registered trademarks of [Spatial Corporation](https://www.spatial.com/), a subsidiary of [Dassault Systemes](https://www.3ds.com/).
