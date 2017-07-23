@@ -149,7 +149,7 @@ if( ACIS_FIND_COMPONENTS )
 endif()
 
 
-# Find 3D ACIS-HOOPS Bridge component bundled with the ACIS package
+# Find "3D ACIS-HOOPS Bridge" component bundled with the ACIS package
 if( ACIS_USE_HBRIDGE )
   # Note: ACIS_HBRIDGE_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
   if( NOT ACIS_HBRIDGE_LIBRARY )
@@ -157,7 +157,7 @@ if( ACIS_USE_HBRIDGE )
     find_library( ACIS_HBRIDGE_LIBRARY_RELEASE NAMES SpaHBridge PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
   endif()
 
-  # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized 3D ACIS-HOOPS Bridge library
+  # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized DLLs
   select_library_configurations( ACIS_HBRIDGE )
 
   # This is required by FPHSA()
