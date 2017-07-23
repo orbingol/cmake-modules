@@ -147,26 +147,28 @@ if( ACIS_FIND_COMPONENTS )
 endif()
 
 
-# Find 3D ACIS-HOOPS Bridge bundled with the ACIS package
-if( ACIS_USE_HOOPS )
-  # Note: ACIS_HOOPS_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
-  if( NOT ACIS_HOOPS_LIBRARY )
-    find_library( ACIS_HOOPS_LIBRARY_DEBUG NAMES SpaHBridged PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
-    find_library( ACIS_HOOPS_LIBRARY_RELEASE NAMES SpaHBridge PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
+# Find 3D ACIS-HOOPS Bridge component bundled with the ACIS package
+if( ACIS_USE_HBRIDGE )
+  # Note: ACIS_HBRIDGE_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
+  if( NOT ACIS_HBRIDGE_LIBRARY )
+    find_library( ACIS_HBRIDGE_LIBRARY_DEBUG NAMES SpaHBridged PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
+    find_library( ACIS_HBRIDGE_LIBRARY_RELEASE NAMES SpaHBridge PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
   endif()
 
   # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized 3D ACIS-HOOPS Bridge library
-  select_library_configurations( ACIS_HOOPS )
+  select_library_configurations( ACIS_HBRIDGE )
 
   # This is required by FPHSA()
-  if( ACIS_HOOPS_LIBRARY AND ACIS_INCLUDE_DIR )
-    set( ACIS_HOOPS_FOUND ON )
+  if( ACIS_HBRIDGE_LIBRARY AND ACIS_INCLUDE_DIR )
+    set( ACIS_HBRIDGE_FOUND ON )
   endif()
 
   # These are some internal variables and they should be muted
   mark_as_advanced(
-      ACIS_HOOPS_LIBRARY_RELEASE
-      ACIS_HOOPS_LIBRARY_DEBUG
+      ACIS_HBRIDGE_LIBRARY_RELEASE
+      ACIS_HBRIDGE_LIBRARY_DEBUG
+  )
+endif()
   )
 endif()
 
@@ -221,32 +223,32 @@ if( ACIS_FOUND )
   endif()
 
   if( ACIS_HOOPS_FOUND )
-    if( NOT TARGET ACIS::HOOPS )
-      add_library( ACIS::HOOPS UNKNOWN IMPORTED )
-      set_target_properties( ACIS::HOOPS PROPERTIES
+    if( NOT TARGET ACIS::HBRIDGE )
+      add_library( ACIS::HBRIDGE UNKNOWN IMPORTED )
+      set_target_properties( ACIS::HBRIDGE PROPERTIES
           INTERFACE_LINK_LIBRARIES "ACIS::ACIS" )
       if( ACIS_INCLUDE_DIRS )
-        set_target_properties( ACIS::HOOPS PROPERTIES
+        set_target_properties( ACIS::HBRIDGE PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${ACIS_INCLUDE_DIRS}" )
       endif()
-      if( EXISTS "${ACIS_HOOPS_LIBRARY}" )
-        set_target_properties( ACIS::HOOPS PROPERTIES
+      if( EXISTS "${ACIS_HBRIDGE_LIBRARY}" )
+        set_target_properties( ACIS::HBRIDGE PROPERTIES
             IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-            IMPORTED_LOCATION "${ACIS_HOOPS_LIBRARY}" )
+            IMPORTED_LOCATION "${ACIS_HBRIDGE_LIBRARY}" )
       endif()
-      if( EXISTS "${ACIS_HOOPS_LIBRARY_RELEASE}" )
-        set_property( TARGET ACIS::HOOPS APPEND PROPERTY
+      if( EXISTS "${ACIS_HBRIDGE_LIBRARY_RELEASE}" )
+        set_property( TARGET ACIS::HBRIDGE APPEND PROPERTY
             IMPORTED_CONFIGURATIONS RELEASE )
-        set_target_properties( ACIS::HOOPS PROPERTIES
+        set_target_properties( ACIS::HBRIDGE PROPERTIES
             IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-            IMPORTED_LOCATION_RELEASE "${ACIS_HOOPS_LIBRARY_RELEASE}" )
+            IMPORTED_LOCATION_RELEASE "${ACIS_HBRIDGE_LIBRARY_RELEASE}" )
       endif()
-      if( EXISTS "${ACIS_HOOPS_LIBRARY_DEBUG}" )
-        set_property( TARGET ACIS::HOOPS APPEND PROPERTY
+      if( EXISTS "${ACIS_HBRIDGE_LIBRARY_DEBUG}" )
+        set_property( TARGET ACIS::HBRIDGE APPEND PROPERTY
             IMPORTED_CONFIGURATIONS DEBUG )
-        set_target_properties( ACIS::HOOPS PROPERTIES
+        set_target_properties( ACIS::HBRIDGE PROPERTIES
             IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-            IMPORTED_LOCATION_DEBUG "${ACIS_HOOPS_LIBRARY_DEBUG}" )
+            IMPORTED_LOCATION_DEBUG "${ACIS_HBRIDGE_LIBRARY_DEBUG}" )
       endif()
     endif()
   endif()
@@ -254,15 +256,15 @@ if( ACIS_FOUND )
   # Set a variable to be used for linking ACIS and Threads to the project
   set( ACIS_LINK_LIBRARIES ${ACIS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
-  if( ACIS_HOOPS_FOUND )
-    set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_HOOPS_LIBRARIES} )
+  if( ACIS_HBRIDGE_FOUND )
+    set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_HBRIDGE_LIBRARIES} )
   endif()
 
   # Set somes variables which point to the ACIS dynamic libraries (.dll/.so)
   if( WIN32 )
     set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaACISd.dll )
     set( ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll )
-    if( ACIS_HOOPS_FOUND )
+    if( ACIS_HBRIDGE_FOUND )
       # TO-DO: We might need to add the HOOPS DLL file to the list
       set( ACIS_REDIST_DEBUG ${ACIS_REDIST_DEBUG} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridged.dll )
       set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridge.dll )

@@ -63,7 +63,7 @@ install (
 It is also possible to find _3D ACIS-HOOPS Bridge_ by adding a `COMPONENTS` argument to `find_package`. It will be automatically added to `ACIS_LINK_LIBRARIES` variable:
 
 ```
-find_package ( ACIS COMPONENTS HOOPS REQUIRED )
+find_package ( ACIS COMPONENTS HBRIDGE REQUIRED )
 ```
 
 ## License
