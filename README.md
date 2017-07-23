@@ -60,11 +60,19 @@ install (
 )
 ```
 
+### findACIS Components
+
 It is also possible to find _3D ACIS-HOOPS Bridge_ by adding a `COMPONENTS` argument to `find_package`. It will be automatically added to `ACIS_LINK_LIBRARIES` variable:
 
 ```
 find_package ( ACIS COMPONENTS HBRIDGE REQUIRED )
 ```
+
+The other components that can be discovered by this CMake find module are
+
+* Precise Hidden Line Removal V5 - `PHLV5`
+* Defeaturing - `DEFEATURE`
+* Advanced Deformable Modeling - `ADMHUSK`
 
 ## License
 
