@@ -67,6 +67,8 @@ set( _ACIS_SEARCH_HINTDIRS
     "/opt/acis"
     "/opt/r26" # for ACIS R26
     "/opt/2017" # for ACIS R2017
+    "/opt/2018" # for ACIS R2018
+    "/opt/20" # for ACIS R20xx
     )
 foreach( hintdir ${_ACIS_SEARCH_HINTDIRS} )
   file( GLOB acisdirs ${hintdir} ${hintdir}*/ )
