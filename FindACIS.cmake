@@ -222,7 +222,7 @@ if( ACIS_FOUND )
     endif()
   endif()
 
-  if( ACIS_HOOPS_FOUND )
+  if( ACIS_HBRIDGE_FOUND )
     if( NOT TARGET ACIS::HBRIDGE )
       add_library( ACIS::HBRIDGE UNKNOWN IMPORTED )
       set_target_properties( ACIS::HBRIDGE PROPERTIES
