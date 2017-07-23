@@ -171,6 +171,73 @@ if( ACIS_USE_HBRIDGE )
       ACIS_HBRIDGE_LIBRARY_DEBUG
   )
 endif()
+
+# Find "Precise Hidden Line Removal V5" component bundled with the ACIS package
+if( ACIS_USE_PHLV5 )
+  # Note: ACIS_PHLV5_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
+  if( NOT ACIS_PHLV5_LIBRARY )
+    find_library( ACIS_PHLV5_LIBRARY_DEBUG NAMES SpaPhlV5d PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
+    find_library( ACIS_PHLV5_LIBRARY_RELEASE NAMES SpaPhlV5 PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
+  endif()
+
+  # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized DLLs
+  select_library_configurations( ACIS_PHLV5 )
+
+  # This is required by FPHSA()
+  if( ACIS_PHLV5_LIBRARY AND ACIS_INCLUDE_DIR )
+    set( ACIS_PHLV5_FOUND ON )
+  endif()
+
+  # These are some internal variables and they should be muted
+  mark_as_advanced(
+      ACIS_PHLV5_LIBRARY_RELEASE
+      ACIS_PHLV5_LIBRARY_DEBUG
+  )
+endif()
+
+# Find "Defeaturing" component bundled with the ACIS package
+if( ACIS_USE_DEFEATURE )
+  # Note: ACIS_DEFEATURE_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
+  if( NOT ACIS_DEFEATURE_LIBRARY )
+    find_library( ACIS_DEFEATURE_LIBRARY_DEBUG NAMES SpaDefeatured PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
+    find_library( ACIS_DEFEATURE_LIBRARY_RELEASE NAMES SpaDefeature PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
+  endif()
+
+  # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized DLLs
+  select_library_configurations( ACIS_DEFEATURE )
+
+  # This is required by FPHSA()
+  if( ACIS_DEFEATURE_LIBRARY AND ACIS_INCLUDE_DIR )
+    set( ACIS_DEFEATURE_FOUND ON )
+  endif()
+
+  # These are some internal variables and they should be muted
+  mark_as_advanced(
+      ACIS_DEFEATURE_LIBRARY_RELEASE
+      ACIS_DEFEATURE_LIBRARY_DEBUG
+  )
+endif()
+
+# Find "Advanced Deformable Modeling" component bundled with the ACIS package
+if( ACIS_USE_ADMHUSK )
+  # Note: ACIS_ADMHUSK_LIBRARY is set by SELECT_LIBRARY_CONFIGURATIONS()
+  if( NOT ACIS_ADMHUSK_LIBRARY )
+    find_library( ACIS_ADMHUSK_LIBRARY_DEBUG NAMES admhuskd PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}D/code/lib ${ACIS_ARCH}/code/bin )
+    find_library( ACIS_ADMHUSK_LIBRARY_RELEASE NAMES admhusk PATHS ${_ACIS_ROOT_DIR} PATH_SUFFIXES ${ACIS_ARCH}/code/lib ${ACIS_ARCH}/code/bin )
+  endif()
+
+  # Use SELECT_LIBRARY_CONFIGURATIONS() to find the debug and optimized DLLs
+  select_library_configurations( ACIS_ADMHUSK )
+
+  # This is required by FPHSA()
+  if( ACIS_ADMHUSK_LIBRARY AND ACIS_INCLUDE_DIR )
+    set( ACIS_ADMHUSK_FOUND ON )
+  endif()
+
+  # These are some internal variables and they should be muted
+  mark_as_advanced(
+      ACIS_ADMHUSK_LIBRARY_RELEASE
+      ACIS_ADMHUSK_LIBRARY_DEBUG
   )
 endif()
 
@@ -194,7 +261,7 @@ if( ACIS_FOUND )
     find_package( Threads REQUIRED )
   endif()
 
-  # Add imported targets
+  # Add imported targets - 3D ACIS Modeler
   if( NOT TARGET ACIS::ACIS )
     add_library( ACIS::ACIS UNKNOWN IMPORTED )
     set_target_properties( ACIS::ACIS PROPERTIES
@@ -224,6 +291,7 @@ if( ACIS_FOUND )
     endif()
   endif()
 
+  # Add imported targets - 3D ACIS-HOOPS Bridge
   if( ACIS_HBRIDGE_FOUND )
     if( NOT TARGET ACIS::HBRIDGE )
       add_library( ACIS::HBRIDGE UNKNOWN IMPORTED )
@@ -253,6 +321,99 @@ if( ACIS_FOUND )
             IMPORTED_LOCATION_DEBUG "${ACIS_HBRIDGE_LIBRARY_DEBUG}" )
       endif()
     endif()
+
+    # Add imported targets - Precise Hidden Line Removal V5
+    if( ACIS_PHLV5_FOUND )
+      if( NOT TARGET ACIS::PHLV5 )
+        add_library( ACIS::PHLV5 UNKNOWN IMPORTED )
+        set_target_properties( ACIS::PHLV5 PROPERTIES
+            INTERFACE_LINK_LIBRARIES "ACIS::ACIS" )
+        if( ACIS_INCLUDE_DIRS )
+          set_target_properties( ACIS::PHLV5 PROPERTIES
+              INTERFACE_INCLUDE_DIRECTORIES "${ACIS_INCLUDE_DIRS}" )
+        endif()
+        if( EXISTS "${ACIS_PHLV5_LIBRARY}" )
+          set_target_properties( ACIS::PHLV5 PROPERTIES
+              IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+              IMPORTED_LOCATION "${ACIS_PHLV5_LIBRARY}" )
+        endif()
+        if( EXISTS "${ACIS_PHLV5_LIBRARY_RELEASE}" )
+          set_property( TARGET ACIS::PHLV5 APPEND PROPERTY
+              IMPORTED_CONFIGURATIONS RELEASE )
+          set_target_properties( ACIS::PHLV5 PROPERTIES
+              IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+              IMPORTED_LOCATION_RELEASE "${ACIS_PHLV5_LIBRARY_RELEASE}" )
+        endif()
+        if( EXISTS "${ACIS_PHLV5_LIBRARY_DEBUG}" )
+          set_property( TARGET ACIS::PHLV5 APPEND PROPERTY
+              IMPORTED_CONFIGURATIONS DEBUG )
+          set_target_properties( ACIS::PHLV5 PROPERTIES
+              IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+              IMPORTED_LOCATION_DEBUG "${ACIS_PHLV5_LIBRARY_DEBUG}" )
+        endif()
+      endif()
+
+      # Add imported targets - Defeaturing
+      if( ACIS_DEFEATURE_FOUND )
+        if( NOT TARGET ACIS::DEFEATURE )
+          add_library( ACIS::DEFEATURE UNKNOWN IMPORTED )
+          set_target_properties( ACIS::DEFEATURE PROPERTIES
+              INTERFACE_LINK_LIBRARIES "ACIS::ACIS" )
+          if( ACIS_INCLUDE_DIRS )
+            set_target_properties( ACIS::DEFEATURE PROPERTIES
+                INTERFACE_INCLUDE_DIRECTORIES "${ACIS_INCLUDE_DIRS}" )
+          endif()
+          if( EXISTS "${ACIS_DEFEATURE_LIBRARY}" )
+            set_target_properties( ACIS::DEFEATURE PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                IMPORTED_LOCATION "${ACIS_DEFEATURE_LIBRARY}" )
+          endif()
+          if( EXISTS "${ACIS_DEFEATURE_LIBRARY_RELEASE}" )
+            set_property( TARGET ACIS::DEFEATURE APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS RELEASE )
+            set_target_properties( ACIS::DEFEATURE PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+                IMPORTED_LOCATION_RELEASE "${ACIS_DEFEATURE_LIBRARY_RELEASE}" )
+          endif()
+          if( EXISTS "${ACIS_DEFEATURE_LIBRARY_DEBUG}" )
+            set_property( TARGET ACIS::DEFEATURE APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS DEBUG )
+            set_target_properties( ACIS::DEFEATURE PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+                IMPORTED_LOCATION_DEBUG "${ACIS_DEFEATURE_LIBRARY_DEBUG}" )
+          endif()
+        endif()
+
+        # Add imported targets - Advanced Deformable Modeling
+        if( ACIS_ADMHUSK_FOUND )
+          if( NOT TARGET ACIS::ADMHUSK )
+            add_library( ACIS::ADMHUSK UNKNOWN IMPORTED )
+            set_target_properties( ACIS::ADMHUSK PROPERTIES
+                INTERFACE_LINK_LIBRARIES "ACIS::ACIS" )
+            if( ACIS_INCLUDE_DIRS )
+              set_target_properties( ACIS::ADMHUSK PROPERTIES
+                  INTERFACE_INCLUDE_DIRECTORIES "${ACIS_INCLUDE_DIRS}" )
+            endif()
+            if( EXISTS "${ACIS_ADMHUSK_LIBRARY}" )
+              set_target_properties( ACIS::ADMHUSK PROPERTIES
+                  IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                  IMPORTED_LOCATION "${ACIS_ADMHUSK_LIBRARY}" )
+            endif()
+            if( EXISTS "${ACIS_ADMHUSK_LIBRARY_RELEASE}" )
+              set_property( TARGET ACIS::ADMHUSK APPEND PROPERTY
+                  IMPORTED_CONFIGURATIONS RELEASE )
+              set_target_properties( ACIS::ADMHUSK PROPERTIES
+                  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+                  IMPORTED_LOCATION_RELEASE "${ACIS_ADMHUSK_LIBRARY_RELEASE}" )
+            endif()
+            if( EXISTS "${ACIS_ADMHUSK_LIBRARY_DEBUG}" )
+              set_property( TARGET ACIS::ADMHUSK APPEND PROPERTY
+                  IMPORTED_CONFIGURATIONS DEBUG )
+              set_target_properties( ACIS::ADMHUSK PROPERTIES
+                  IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+                  IMPORTED_LOCATION_DEBUG "${ACIS_ADMHUSK_LIBRARY_DEBUG}" )
+            endif()
+          endif()
   endif()
 
   # Set a variable to be used for linking ACIS and Threads to the project
@@ -262,14 +423,43 @@ if( ACIS_FOUND )
     set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_HBRIDGE_LIBRARIES} )
   endif()
 
+  if( ACIS_PHLV5_FOUND )
+    set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_PHLV5_LIBRARIES} )
+  endif()
+
+  if( ACIS_DEFEATURE_FOUND )
+    set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_DEFEATURE_LIBRARIES} )
+  endif()
+
+  if( ACIS_ADMHUSK_FOUND )
+    set( ACIS_LINK_LIBRARIES ${ACIS_LINK_LIBRARIES} ${ACIS_ADMHUSK_LIBRARIES} )
+  endif()
+
   # Set somes variables which point to the ACIS dynamic libraries (.dll/.so)
   if( WIN32 )
+    # ACIS itself
     set( ACIS_REDIST_DEBUG ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaACISd.dll )
     set( ACIS_REDIST_RELEASE ${_ACIS_ROOT_DIR}/${ACIS_ARCH}/code/bin/SpaACIS.dll )
+    # 3D ACIS-HOOPS Bridge
     if( ACIS_HBRIDGE_FOUND )
       # TO-DO: We might need to add the HOOPS DLL file to the list
       set( ACIS_REDIST_DEBUG ${ACIS_REDIST_DEBUG} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridged.dll )
       set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaHBridge.dll )
+    endif()
+    # Precise Hidden Line Removal
+    if( ACIS_PHLV5_FOUND )
+      set( ACIS_REDIST_DEBUG ${ACIS_REDIST_DEBUG} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaPhlV5d.dll )
+      set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaPhlV5.dll )
+    endif()
+    # Defeaturing
+    if( ACIS_DEFEATURE_FOUND )
+      set( ACIS_REDIST_DEBUG ${ACIS_REDIST_DEBUG} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaDefeatured.dll )
+      set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/SpaDefeature.dll )
+    endif()
+    # Defeaturing
+    if( ACIS_ADMHUSK_FOUND )
+      set( ACIS_REDIST_DEBUG ${ACIS_REDIST_DEBUG} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/admhuskd.dll )
+      set( ACIS_REDIST_RELEASE ${ACIS_REDIST_RELEASE} ${_ACIS_ROOT_DIR}/${ACIS_ARCH}D/code/bin/admhusk.dll )
     endif()
   else()
     # Setting these variables for install is unnecessary due to the working priciples of non-Windows systems
