@@ -1,6 +1,6 @@
-# Custom CMake Modules
+# CMake Find Modules for Solid Modeling Kernels
 
-This repository contains the following [CMake](https://cmake.org/) modules:
+This repository contains the following [CMake](https://cmake.org/) find modules:
 
 * __findACIS__: Finds libraries and headers for building applications which use [Spatial Corporation](https://www.spatial.com/)'s _3D ACIS Modeler_
 
@@ -60,7 +60,7 @@ install (
 )
 ```
 
-### findACIS Components
+#### findACIS Components:
 
 It is also possible to find _3D ACIS-HOOPS Bridge_ by adding a `COMPONENTS` argument to `find_package`. It will be automatically added to `ACIS_LINK_LIBRARIES` variable:
 
@@ -81,3 +81,5 @@ The other components that can be discovered by this CMake find module are
 ## Author
 
 * Onur Rauf Bingol (contact@onurbingol.net)
+
+ACIS and SAT are registered trademarks of [Spatial Corporation](https://www.spatial.com/), a subsidiary of [Dassault Systemes](https://www.3ds.com/).
