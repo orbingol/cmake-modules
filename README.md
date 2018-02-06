@@ -13,7 +13,7 @@ This repository contains the following [CMake](https://cmake.org/) find modules:
 * Use the following (or modify it for your needs) in your `CMakeLists.txt` file
 
 ```
-cmake_minimum_required ( VERSION 2.8 )
+cmake_minimum_required ( VERSION 2.8.11 )
 project ( MyACISApp )
 
 # Extend CMake module path for loading custom modules
